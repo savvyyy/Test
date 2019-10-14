@@ -1,14 +1,30 @@
-const http = require('http');
+require('dotenv').config();
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const express = require('express');
+const app = express();
+const path = require('path');
+const ngrok = require('ngrok');
+const user = process.env.USER;
+const password = process.env.PASSWORD;
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World.sdcsdszxdcsdsdszcxzasdfaszdcadscdzscssada\n');
+app.get('/', (req, res) => {
+    res.send('This is the tunnel created by Ngrok withxvdsdzcfsd Http Auth');
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+const server = app.listen(process.env.PORT, () => {
+    console.log('Express listening at ', server.address().port);
+})
+
+ngrok.connect({
+    proto : 'http',
+    addr : process.env.PORT,
+    auth : `${user}:${password}`
+}, (err, url) => {
+    if (err) {
+        console.error('Error while connecting Ngrok',err);
+        return new Error('Ngrok Failed');
+    } else {
+        console.log('Tunnel Created -> ', url);
+        console.log('Tunnel Inspector ->  http://127.0.0.1:4040');
+    }
 });
